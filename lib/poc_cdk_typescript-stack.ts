@@ -7,6 +7,8 @@ import * as s3assets from "@aws-cdk/aws-s3-assets"; // Allows managing files wit
 import * as keypair from "cdk-ec2-key-pair";        // Helper to create EC2 SSH keypairs
 import * as path from "path";                       // Helper for working with file paths
 
+import variablesFile from '../variables_file.json'; // Import from a file
+
 export class PocCdkTypescriptStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
