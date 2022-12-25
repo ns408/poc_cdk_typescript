@@ -60,6 +60,12 @@ or
 $cdk ...
 ```
 
+### Import the modules needed
+
+```bash
+npm i @aws-cdk/aws-ec2 @aws-cdk/aws-iam @aws-cdk/aws-s3-assets cdk-ec2-key-pair
+```
+
 ## Useful commands
 
 The `cdk.json` file tells the CDK Toolkit how to execute your app.
@@ -70,7 +76,6 @@ The `cdk.json` file tells the CDK Toolkit how to execute your app.
 * `cdk deploy`      deploy this stack to your default AWS account/region
 * `cdk diff`        compare deployed stack with current state
 * `cdk synth`       emits the synthesized CloudFormation template
-
 
 [Using local tsc and cdk]: https://docs.aws.amazon.com/cdk/v2/guide/work-with-cdk-typescript.html#typescript-local
 [Work-with-cdk-typescript]: https://docs.aws.amazon.com/cdk/v2/guide/work-with-cdk-typescript.html
