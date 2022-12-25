@@ -1,12 +1,20 @@
 # README
 
 
+The `cdk.json` file tells the CDK Toolkit how to execute your app.
 ## Reference
 
+## Useful commands
 - [Work-with-cdk-typescript]
 - [Deploy-webapp-ec2]
 - [Continuous-delivery-of-amazon-eks-clusters-using-aws-cdk-and-cdk-pipelines]
 
+* `npm run build`   compile typescript to js
+* `npm run watch`   watch for changes and compile
+* `npm run test`    perform the jest unit tests
+* `cdk deploy`      deploy this stack to your default AWS account/region
+* `cdk diff`        compare deployed stack with current state
+* `cdk synth`       emits the synthesized CloudFormation template
 ## Prerequisites
 
 ### Install NVM and node
