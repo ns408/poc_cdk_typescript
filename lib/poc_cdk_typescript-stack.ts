@@ -81,5 +81,45 @@ export class PocCdkTypescriptStack extends cdk.Stack {
       role: role,
     });
 
+    // Use an asset to allow uploading files to S3, and then download it to the EC2 instance as part of the user data
+
+    // --- Sample App ---
+    // Upload the sample app  to S3
+    const sampleAppAsset = new s3assets.Asset(this, "SampleAppAsset", {
+      path: path.join(__dirname, "../../SampleApp"),
+    });
+
+    // Allow EC2 instance to read the file
+    sampleAppAsset.grantRead(role);
+
+    // Download the file from S3, and store the full location and filename as a variable
+    const sampleAppFilePath = ec2Instance.userData.addS3DownloadCommand({
+      bucket: sampleAppAsset.bucket,
+      bucketKey: sampleAppAsset.s3ObjectKey,
+    });
+
+    // --- Sample App ---
+
+    // --- Configuration Script ---
+    // Upload the configuration file to S3
+    const configScriptAsset = new s3assets.Asset(this, "ConfigScriptAsset", {
+      path: path.join(__dirname, "../../SampleApp/configure_amz_linux_sample_app.sh"),
+    });
+
+    // Allow EC2 instance to read the file
+    configScriptAsset.grantRead(ec2Instance.role);
+
+    // Download the file from S3, and store the full location and filename as a variable
+    const configScriptFilePath = ec2Instance.userData.addS3DownloadCommand({
+      bucket: configScriptAsset.bucket,
+      bucketKey: configScriptAsset.s3ObjectKey,
+    });
+
+    // Add a line to the user data to execute the downloaded file
+    ec2Instance.userData.addExecuteFileCommand({
+      filePath: configScriptFilePath,
+      arguments: sampleAppFilePath,
+    });
+
   }
 }
