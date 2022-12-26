@@ -1,9 +1,9 @@
 import * as cdk from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 
-import * as ec2 from "@aws-cdk/aws-ec2";            // Allows working with EC2 and VPC resources
-import * as iam from "@aws-cdk/aws-iam";            // Allows working with IAM resources
-import * as s3assets from "@aws-cdk/aws-s3-assets"; // Allows managing files with S3
+//import * as ec2 from "@aws-cdk/aws-ec2";            // Allows working with EC2 and VPC resources
+//import * as iam from "@aws-cdk/aws-iam";            // Allows working with IAM resources
+//import * as s3assets from "@aws-cdk/aws-s3-assets"; // Allows managing files with S3
 import * as keypair from "cdk-ec2-key-pair";        // Helper to create EC2 SSH keypairs
 import * as path from "path";                       // Helper for working with file paths
 
@@ -16,7 +16,7 @@ export class PocCdkTypescriptStack extends cdk.Stack {
     // The code that defines your stack goes here
 
     console.log(variablesFile.vpcid)
-    const vpc = ec2.Vpc.fromLookup(this, 'MyVPC',
+    const vpc = cdk.aws_ec2.Vpc.fromLookup(this, 'MyVPC',
       {tags: {'aws-cdk:Name': variablesFile.vpcname}}
     );
 
@@ -32,7 +32,7 @@ export class PocCdkTypescriptStack extends cdk.Stack {
     key.grantReadOnPublicKey;
 
     // Security group for the EC2 instance
-    const securityGroup = new ec2.SecurityGroup(this, "SecurityGroup", {
+    const securityGroup = new cdk.aws_ec2.SecurityGroup(this, "SecurityGroup", {
       vpc,
       description: "Allow SSH (TCP port 22) and HTTP (TCP port 80) in",
       allowAllOutbound: true,
@@ -40,40 +40,40 @@ export class PocCdkTypescriptStack extends cdk.Stack {
 
     // Allow SSH access on port tcp/22
     securityGroup.addIngressRule(
-      ec2.Peer.ipv4(variablesFile.whitelistIP),
-      ec2.Port.tcp(22),
+      cdk.aws_ec2.Peer.ipv4(variablesFile.whitelistIP),
+      cdk.aws_ec2.Port.tcp(22),
       "Allow SSH Access"
     );
 
     // Allow HTTP access on port tcp/80
     securityGroup.addIngressRule(
-      ec2.Peer.ipv4(variablesFile.whitelistIP),
-      ec2.Port.tcp(80),
+      cdk.aws_ec2.Peer.ipv4(variablesFile.whitelistIP),
+      cdk.aws_ec2.Port.tcp(80),
       "Allow HTTP Access"
     );
 
     // IAM role to allow access to other AWS services
-    const role = new iam.Role(this, "ec2Role", {
-      assumedBy: new iam.ServicePrincipal("ec2.amazonaws.com"),
+    const role = new cdk.aws_iam.Role(this, "ec2Role", {
+      assumedBy: new cdk.aws_iam.ServicePrincipal("ec2.amazonaws.com"),
     });
 
     // IAM policy attachment to allow access to
     role.addManagedPolicy(
-      iam.ManagedPolicy.fromAwsManagedPolicyName("AmazonSSMManagedInstanceCore")
+      cdk.aws_iam.ManagedPolicy.fromAwsManagedPolicyName("AmazonSSMManagedInstanceCore")
     );
 
     // Look up the AMI Id for the Amazon Linux 2 Image with CPU Type X86_64
-    const ami = new ec2.AmazonLinuxImage({
-      generation: ec2.AmazonLinuxGeneration.AMAZON_LINUX_2,
-      cpuType: ec2.AmazonLinuxCpuType.X86_64,
+    const ami = new cdk.aws_ec2.AmazonLinuxImage({
+      generation: cdk.aws_ec2.AmazonLinuxGeneration.AMAZON_LINUX_2,
+      cpuType: cdk.aws_ec2.AmazonLinuxCpuType.X86_64,
     });
 
     // Create the EC2 instance using the Security Group, AMI, and KeyPair defined.
-    const ec2Instance = new ec2.Instance(this, "MyInstance", {
+    const ec2Instance = new cdk.aws_ec2.Instance(this, "MyInstance", {
       vpc,
-      instanceType: ec2.InstanceType.of(
-        ec2.InstanceClass.T2,
-        ec2.InstanceSize.MICRO
+      instanceType: cdk.aws_ec2.InstanceType.of(
+        cdk.aws_ec2.InstanceClass.T2,
+        cdk.aws_ec2.InstanceSize.MICRO
       ),
       machineImage: ami,
       securityGroup: securityGroup,
@@ -85,7 +85,7 @@ export class PocCdkTypescriptStack extends cdk.Stack {
 
     // --- Sample App ---
     // Upload the sample app  to S3
-    const sampleAppAsset = new s3assets.Asset(this, "SampleAppAsset", {
+    const sampleAppAsset = new cdk.aws_s3_assets.Asset(this, "SampleAppAsset", {
       path: path.join(__dirname, "../../SampleApp"),
     });
 
@@ -102,7 +102,7 @@ export class PocCdkTypescriptStack extends cdk.Stack {
 
     // --- Configuration Script ---
     // Upload the configuration file to S3
-    const configScriptAsset = new s3assets.Asset(this, "ConfigScriptAsset", {
+    const configScriptAsset = new cdk.aws_s3_assets.Asset(this, "ConfigScriptAsset", {
       path: path.join(__dirname, "../../SampleApp/configure_amz_linux_sample_app.sh"),
     });
 

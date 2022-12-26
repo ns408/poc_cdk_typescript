@@ -81,3 +81,4 @@ The `cdk.json` file tells the CDK Toolkit how to execute your app.
 [Work-with-cdk-typescript]: https://docs.aws.amazon.com/cdk/v2/guide/work-with-cdk-typescript.html
 [Deploy-webapp-ec2]: https://aws.amazon.com/getting-started/guides/deploy-webapp-ec2/
 [Continuous-delivery-of-amazon-eks-clusters-using-aws-cdk-and-cdk-pipelines]: https://aws.amazon.com/blogs/containers/continuous-delivery-of-amazon-eks-clusters-using-aws-cdk-and-cdk-pipelines/
+[cdkworkshop.com]: https://cdkworkshop.com/
