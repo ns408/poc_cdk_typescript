@@ -121,5 +121,27 @@ export class PocCdkTypescriptStack extends cdk.Stack {
       arguments: sampleAppFilePath,
     });
 
+    // Create outputs for connecting
+
+    // Output the public IP address of the EC2 instance
+    new cdk.CfnOutput(this, "IP Address", {
+      value: ec2Instance.instancePublicIp,
+    });
+
+    // Command to download the SSH key
+    new cdk.CfnOutput(this, "Download Key Command", {
+      value:
+        "aws secretsmanager get-secret-value --secret-id ec2-ssh-key/cdk-keypair/private --query SecretString --output text > cdk-key.pem && chmod 400 cdk-key.pem",
+    });
+
+    // Command to access the EC2 instance using SSH
+    new cdk.CfnOutput(this, "ssh command", {
+      value:
+        "ssh -i cdk-key.pem -o IdentitiesOnly=yes ec2-user@" +
+        ec2Instance.instancePublicIp,
+    });
+
+    // --- Configuration Script ---
+
   }
 }
