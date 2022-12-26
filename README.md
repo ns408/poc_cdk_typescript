@@ -44,10 +44,10 @@ cdk ...
 ### Use local tools
 
 ```bash
-export cdk="npx aws-cdk"
+alias cdk="npx aws-cdk"
 
 # Initialise
-$cdk init --language typescript
+cdk init --language typescript
 
 # Build
 npm run build
@@ -55,14 +55,60 @@ npm run build
 # Run CDK Toolkit command
 npm run cdk ...
 or
-$cdk ...
+cdk ...
 ```
 
 ### Import the modules needed
 
 ```bash
-npm i @aws-cdk/aws-ec2 @aws-cdk/aws-iam @aws-cdk/aws-s3-assets cdk-ec2-key-pair
+npm i cdk-ec2-key-pair
 ```
+
+### Setup the context / env
+
+<details><summary>Expand</summary>
+<p>
+
+```bash
+export AWS_PROFILE=<PROFILENAME>
+export CDK_DEFAULT_ACCOUNT=$(aws sts get-caller-identity | jq -r .Account)
+export CDK_DEFAULT_REGION=$(aws configure get region)
+export AWS_ACCESS_KEY_ID=$(aws configure get aws_access_key_id)
+export AWS_SECRET_ACCESS_KEY=$(aws configure get aws_secret_access_key)
+export AWS_SESSION_TOKEN=$(aws configure get aws_session_token)
+```
+
+</p>
+</details>
+
+### Bootstrap
+
+```bash
+npm run cdk bootstrap
+```
+
+## Troubleshooting
+
+<details><summary>Expand</summary>
+<p>
+
+`cdk SyntaxError: Unexpected token ? at Module._compile (internal/modules/cjs/loader.js:723:23)`
+
+Reference: https://github.com/aws/aws-cdk/issues/20678
+
+Performed the following:
+
+```bash
+nvm install --lts --latest-npm
+rm -rf node_modules
+for item in typescript aws-cdk; do
+  npm update -g $item || npm install -g $item
+done
+npm run cdk bootstrap
+```
+
+</p>
+</details>
 
 ## Useful commands
 
