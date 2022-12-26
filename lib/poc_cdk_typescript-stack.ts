@@ -15,9 +15,9 @@ export class PocCdkTypescriptStack extends cdk.Stack {
 
     // The code that defines your stack goes here
 
-    console.log(variablesFile.vpcid)
-    const vpc = cdk.aws_ec2.Vpc.fromLookup(this, 'MyVPC',
-      {tags: {'aws-cdk:Name': variablesFile.vpcname}}
+    // console.log(variablesFile.vpcid)
+    const vpc = cdk.aws_ec2.Vpc.fromLookup(this, 'VPC', { vpcId: variablesFile.vpcid }
+      // {tags: {'aws-cdk:Name': variablesFile.vpcname}}
     );
 
     //ec2.Vpc.fromVpcAttributes(this, 'MyVPC', {
@@ -123,9 +123,9 @@ export class PocCdkTypescriptStack extends cdk.Stack {
 
     // Create outputs for connecting
 
-    // Output the public IP address of the EC2 instance
+    // Output the private IP address of the EC2 instance
     new cdk.CfnOutput(this, "IP Address", {
-      value: ec2Instance.instancePublicIp,
+      value: ec2Instance.instancePrivateIp,
     });
 
     // Command to download the SSH key
@@ -138,7 +138,7 @@ export class PocCdkTypescriptStack extends cdk.Stack {
     new cdk.CfnOutput(this, "ssh command", {
       value:
         "ssh -i cdk-key.pem -o IdentitiesOnly=yes ec2-user@" +
-        ec2Instance.instancePublicIp,
+        ec2Instance.instancePrivateIp,
     });
 
     // --- Configuration Script ---
