@@ -8,6 +8,7 @@ import * as keypair from "cdk-ec2-key-pair";            // Helper to create EC2 
 import * as path from "path";                           // Helper for working with file paths
 
 import variablesFile from '../variables_file.json';     // Import some variables from a json file
+import { CfnInstance } from 'aws-cdk-lib/aws-ec2';
 
 export class PocCdkTypescriptStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
@@ -17,8 +18,8 @@ export class PocCdkTypescriptStack extends Stack {
 
     // console.log(variablesFile.vpcid)
     const vpc = ec2.Vpc.fromLookup(this, 'VPC', {
-      vpcId: variablesFile.vpcid }
-    );
+      vpcId: variablesFile.vpcid
+    });
 
     // Create a key pair to be used with this EC2 Instance
     const key = new keypair.KeyPair(this, "KeyPair", {
@@ -65,7 +66,7 @@ export class PocCdkTypescriptStack extends Stack {
     });
 
     // Create the EC2 instance using the Security Group, AMI, and KeyPair defined.
-    const ec2Instance = new ec2.Instance(this, "MyInstance", {
+    const ec2Instance = new ec2.Instance(this, 'Instance', {
       vpc,
       instanceType: ec2.InstanceType.of(
         ec2.InstanceClass.T2,
@@ -121,7 +122,7 @@ export class PocCdkTypescriptStack extends Stack {
 
     // Output the private IP address of the EC2 instance
     new CfnOutput(this, "IP Address", {
-      value: ec2Instance.instancePrivateIp,
+      value: ec2Instance.instancePublicIp,
     });
 
     // Command to download the SSH key
@@ -134,7 +135,7 @@ export class PocCdkTypescriptStack extends Stack {
     new CfnOutput(this, "ssh command", {
       value:
         "ssh -i cdk-key.pem -o IdentitiesOnly=yes ec2-user@" +
-        ec2Instance.instancePrivateIp,
+        ec2Instance.instancePublicIp,
     });
 
     // --- Configuration Script ---
