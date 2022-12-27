@@ -88,6 +88,15 @@ export class PocCdkTypescriptStack extends Stack {
       role: role,
     });
 
+    // Modify CloudFormation properties directly to enable `associatePublicIpAddress`
+    const CfnInstance = ec2Instance.node.defaultChild as CfnInstance;
+    CfnInstance.networkInterfaces = [{
+      deviceIndex: '0',
+      // the properties below are optional
+      associatePublicIpAddress: true,
+      subnetId: variablesFile.publicsubnet
+    }];
+
     // Use an asset to allow uploading files to S3, and then download it to the EC2 instance as part of the user data
 
     // --- Sample App ---
