@@ -65,9 +65,19 @@ export class PocCdkTypescriptStack extends Stack {
       cpuType: ec2.AmazonLinuxCpuType.X86_64,
     });
 
+    //  Instantiate
+    //  CfnInstance.NetworkInterfaceProperty(
+    //  const networkInterfaceProperty: ec2.CfnInstance.NetworkInterfaceProperty = {
+    //      deviceIndex: "0",
+    //      associatePublicIpAddress: true,
+    //  };
+
     // Create the EC2 instance using the Security Group, AMI, and KeyPair defined.
     const ec2Instance = new ec2.Instance(this, 'Instance', {
       vpc,
+      //  vpcSubnets: {
+      //    subnets: [ec2.Subnet.fromSubnetId(this, 'subnet', variablesFile.publicsubnet)],
+      //  },
       instanceType: ec2.InstanceType.of(
         ec2.InstanceClass.T2,
         ec2.InstanceSize.MICRO
