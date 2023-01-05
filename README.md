@@ -5,6 +5,7 @@
 - [Work-with-cdk-typescript]
 - [Deploy-webapp-ec2]
 - [Continuous-delivery-of-amazon-eks-clusters-using-aws-cdk-and-cdk-pipelines]
+- [Best practices CDK Typescript]
 
 ## Prerequisites
 
@@ -126,3 +127,4 @@ The `cdk.json` file tells the CDK Toolkit how to execute your app.
 [Deploy-webapp-ec2]: https://aws.amazon.com/getting-started/guides/deploy-webapp-ec2/
 [Continuous-delivery-of-amazon-eks-clusters-using-aws-cdk-and-cdk-pipelines]: https://aws.amazon.com/blogs/containers/continuous-delivery-of-amazon-eks-clusters-using-aws-cdk-and-cdk-pipelines/
 [cdkworkshop.com]: https://cdkworkshop.com/
+[Best practices CDK Typescript]: https://docs.aws.amazon.com/prescriptive-guidance/latest/best-practices-cdk-typescript-iac/introduction.html
