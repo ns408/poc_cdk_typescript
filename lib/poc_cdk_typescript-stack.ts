@@ -8,13 +8,10 @@ import * as keypair from "cdk-ec2-key-pair";            // Helper to create EC2 
 import * as path from "path";                           // Helper for working with file paths
 
 import variablesFile from '../variables_file.json';     // Import some variables from a json file
-import { CfnInstance } from 'aws-cdk-lib/aws-ec2';
 
 export class PocCdkTypescriptStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
-
-    // The code that defines your stack goes here
 
     // console.log(variablesFile.vpcid)
     const vpc = ec2.Vpc.fromLookup(this, 'VPC', {
@@ -65,19 +62,9 @@ export class PocCdkTypescriptStack extends Stack {
       cpuType: ec2.AmazonLinuxCpuType.X86_64,
     });
 
-    //  Instantiate
-    //  CfnInstance.NetworkInterfaceProperty(
-    //  const networkInterfaceProperty: ec2.CfnInstance.NetworkInterfaceProperty = {
-    //      deviceIndex: "0",
-    //      associatePublicIpAddress: true,
-    //  };
-
     // Create the EC2 instance using the Security Group, AMI, and KeyPair defined.
     const ec2Instance = new ec2.Instance(this, 'Instance', {
       vpc,
-      //  vpcSubnets: {
-      //    subnets: [ec2.Subnet.fromSubnetId(this, 'subnet', variablesFile.publicsubnet)],
-      //  },
       instanceType: ec2.InstanceType.of(
         ec2.InstanceClass.T2,
         ec2.InstanceSize.MICRO
@@ -89,12 +76,10 @@ export class PocCdkTypescriptStack extends Stack {
     });
 
     // Modify CloudFormation properties directly to enable `associatePublicIpAddress`
-    const CfnInstance = ec2Instance.node.defaultChild as CfnInstance;
+    const CfnInstance = ec2Instance.node.defaultChild as ec2.CfnInstance;
     CfnInstance.networkInterfaces = [{
       deviceIndex: '0',
-      // the properties below are optional
-      associatePublicIpAddress: true,
-      subnetId: variablesFile.publicsubnet
+      associatePublicIpAddress: true
     }];
 
     // Use an asset to allow uploading files to S3, and then download it to the EC2 instance as part of the user data
@@ -139,22 +124,25 @@ export class PocCdkTypescriptStack extends Stack {
 
     // Create outputs for connecting
 
-    // Output the private IP address of the EC2 instance
-    new CfnOutput(this, "IP Address", {
-      value: ec2Instance.instancePublicIp,
-    });
+    // If instance gets a public IP, then expose these outputs
+    if (ec2Instance.instancePublicIp) {
+      // Output the public IP
+      new CfnOutput(this, "IP Address", {
+        value: ec2Instance.instancePublicIp,
+      });
+
+      // SSH Command to access the EC2 instance
+      new CfnOutput(this, "ssh command", {
+        value:
+          "ssh -i cdk-key.pem -o IdentitiesOnly=yes ec2-user@" +
+          ec2Instance.instancePublicIp,
+      });
+    }
 
     // Command to download the SSH key
     new CfnOutput(this, "Download Key Command", {
       value:
         "aws secretsmanager get-secret-value --secret-id ec2-ssh-key/cdk-keypair/private --query SecretString --output text > cdk-key.pem && chmod 400 cdk-key.pem",
-    });
-
-    // Command to access the EC2 instance using SSH
-    new CfnOutput(this, "ssh command", {
-      value:
-        "ssh -i cdk-key.pem -o IdentitiesOnly=yes ec2-user@" +
-        ec2Instance.instancePublicIp,
     });
 
     // --- Configuration Script ---
